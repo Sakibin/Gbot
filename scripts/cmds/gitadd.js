@@ -34,11 +34,7 @@ Only *.js files are allowed.`
  });
  }
 
- const githubToken = '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';
- const owner = 'xnil404';
- const repo = 'xnil-parsonal-bot';
- const branch = 'main';
- const filePath = path.join('scripts', 'cmds', fileName);
+ 
 
  try {
  const code = codeSource.startsWith('http')
