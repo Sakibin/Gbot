@@ -79,12 +79,11 @@ const onChat = async ({ api, event }) => {
  api.unsendMessage(waitMsg.messageID);
 
  const stylishMessage = `
-╭━━━[ ✅ 𝗠𝗲𝗱𝗶𝗮 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 ]━━━╮
+╭━━[✅ 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱]━━━╮
 ┃ ${mediaIcon} Type: ${mediaLabel}
 ┃ ⚡ Speed: ${duration}s
 ┃ 🔗 Link: ${shortUrl}
-╰━━━━━━━━━━━━━━━━━━━━━━╯
-Enjoy your ${mediaLabel.toLowerCase()}! Made with ❤️ by xnil.
+Enjoy your ${mediaLabel.toLowerCase()}! Made with Sakibin.
 `;
 
  await api.sendMessage(

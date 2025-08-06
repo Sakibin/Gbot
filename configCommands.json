@@ -31,5 +31,9 @@
     "logsbot": {
       "allow": true
     }
-  }
+  },
+  "commandUnload": [
+    "help.js",
+    "warn.js"
+  ]
 }

@@ -19,16 +19,16 @@ module.exports = {
 
   langs: {
     en: {
-      helpHeader: "╔══════════◇◆◇══════════╗\n"
+      helpHeader: "╔═══════◇◆◇═══════╗\n"
                 + "      BOT COMMAND LIST\n"
-                + "╠══════════◇◆◇══════════╣",
+                + "╠═══════◇◆◇═══════╣",
       categoryHeader: "\n   ┌────── {category} ──────┐\n",
       commandItem: "║ │ 🟢 {name}",
       helpFooter: "║ └─────────────────┘\n"
-                + "╚══════════◇◆◇══════════╝",
-      commandInfo: "╔══════════◇◆◇══════════╗\n"
+                + "╚═══════◇◆◇═══════╝",
+      commandInfo: "╔═══════◇◆◇═══════╗\n"
                  + "║           COMMAND INFORMATION      \n"
-                 + "╠══════════◇◆◇══════════╣\n"
+                 + "╠═══════◇◆◇═══════╣\n"
                  + "║ 🏷️ Name: {name}\n"
                  + "║ 📝 Description: {description}\n"
                  + "║ 📂 Category: {category}\n"
@@ -37,18 +37,18 @@ module.exports = {
                  + "║ 🔒 Permissions: {role}\n"
                  + "║ ⏱️ Cooldown: {countDown}s\n"
                  + "║ 🔧 Use Prefix: {usePrefix}\n"
-                 + "║ 👤 Author: {author}\n"
-                 + "╠══════════◇◆◇══════════╣",
+                 + "║ 👤 Author: Sakibin\n"
+                 + "╠═══════◇◆◇═══════╣",
       usageHeader: "║ 🛠️ USAGE GUIDE",
       usageBody: " ║ {usage}",
-      usageFooter: "╚══════════◇◆◇══════════╝",
+      usageFooter: "╚═══════◇◆◇═══════╝",
       commandNotFound: "⚠️ Command '{command}' not found!",
       doNotHave: "None",
       roleText0: "👥 All Users",
       roleText1: "👑 Group Admins",
       roleText2: "⚡ Bot Admins",
       totalCommands: "📊 Total Commands: {total}\n"
-                  + "xnil"
+                  + "Sakibin"
     }
   },
 
