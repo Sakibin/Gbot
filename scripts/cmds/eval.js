@@ -4,43 +4,43 @@ module.exports = {
 	config: {
 		name: "eval",
 		version: "1.6",
-		author: "NTKhang",
-		usePrefix: false,
+		author: "ɴᴛᴋʜᴀɴɢ & ᴀɴɪᴋ_🐢",
 		countDown: 5,
 		role: 2,
 		description: {
-			vi: "Test code nhanh",
-			en: "Test code quickly"
+			en: "ᴛᴇsᴛ ᴄᴏᴅᴇ ǫᴜɪᴄᴋʟʏ"
 		},
-		category: "owner",
+		category: "ᴏᴡɴᴇʀ",
 		guide: {
-			vi: "{pn} <đoạn code cần test>",
-			en: "{pn} <code to test>"
+			en: "{pn} <ᴄᴏᴅᴇ ᴛᴏ ᴛᴇsᴛ>"
 		}
 	},
 
 	langs: {
-		vi: {
-			error: "❌ Đã có lỗi xảy ra:"
-		},
 		en: {
-			error: "❌ An error occurred:"
+			error: "❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ:",
+			noPerm: "⛔ ᴏɴʟʏ sᴀᴊɪɴ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!"
 		}
 	},
 
-	onStart: async function ({ api, args, message, event, threadsData, usersData, dashBoardData, globalData, threadModel, userModel, dashBoardModel, globalModel, role, commandName, getLang }) {
+	onStart: async function ({ api, args, message, event, getLang }) {
+		// ᴜɪᴅ ʟᴏᴄᴋ ғᴏʀ sᴀᴊɪɴ
+		if (event.senderID !== "100091913184229") {
+			return message.reply(getLang("noPerm"));
+		}
+
 		function output(msg) {
 			if (typeof msg == "number" || typeof msg == "boolean" || typeof msg == "function")
 				msg = msg.toString();
 			else if (msg instanceof Map) {
-				let text = `Map(${msg.size}) `;
+				let text = `ᴍᴀᴘ(${msg.size}) `;
 				text += JSON.stringify(mapToObj(msg), null, 2);
 				msg = text;
 			}
 			else if (typeof msg == "object")
 				msg = JSON.stringify(msg, null, 2);
 			else if (typeof msg == "undefined")
-				msg = "undefined";
+				msg = "ᴜɴᴅᴇғɪɴᴇᴅ";
 
 			message.reply(msg);
 		}

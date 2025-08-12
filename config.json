@@ -19,13 +19,22 @@
     "ignoreCommand": []
   },
   "adminBot": [
-    "100065445284007"
+    "100065445284007",
+    "100079667622979",
+    "100070747220037",
+    "100075043563313",
+    "100064414006301",
+    "100043356300407",
+    "61557438432846",
+    "100083289819306"
   ],
   "developers": [
-    "100065445284007"
+    "100065445284007",
+    "100079667622979"
   ],
   "premium": [
-    "100065445284007"
+    "100065445284007",
+    "100079667622979"
   ],
   "whiteListMode": {
     "enable": false,
@@ -37,7 +46,9 @@
   "whiteListModeThread": {
     "enable": false,
     "whiteListThreadIds": [
-      ""
+      "",
+      "24899555326313215",
+      "9599130780136453"
     ],
     "notes": "if you enable this feature, only the thread in the whiteListThreadIds list can use the bot",
     "how_it_work": "if you enable both whiteListMode and whiteListModeThread, the system will check if the user is in whiteListIds, then check if the thread is in whiteListThreadIds, if one of the conditions is true, the user can use the bot"
@@ -52,21 +63,21 @@
   "timeZone": "Asia/Dhaka",
   "credentials": {
     "gmailAccount": {
-      "email": "andylabaco@gmail.com",
-      "clientId": "96871167660-5js0qjdlpr2mcd331kv5obpifev5j69r.apps.googleusercontent.com",
-      "clientSecret": "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",
-      "refreshToken": "1//04qK_zxJkdK7RCgYIARAAGAQSNwF-L9IrZOdI4prCgpqvAoDEvn-HpuSugKxBTRNoGS37QwxfAWJUCehSKhdas26xOh-SjmdR4uw",
+      "email": "mdsinha62@gmail.com",
+      "clientId": "732867500543-5ap3a7ta4kgin9kvdpfcqiefgi8qr22h.apps.googleusercontent.com",
+      "clientSecret": "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",
+      "refreshToken": "1//04MvmFSqXvsgcCgYIARAAGAQSNwF-L9IrHlyPDtgi758FTq3kVc1Valul79_pUM2cf6xIbdpTmj5blg2-CfTeNgxUuLDT4nU3mBU",
       "apiKey": ""
     },
     "gRecaptcha": {
-      "siteKey": "6Ldu4R0qAAAAAJrUKnTYx1AaUtVIUCtye1UE_ohw",
-      "secretKey": "6Ldu4R0qAAAAAFauKulV8aV2Z8uowe1ujXG3K5iR"
+      "siteKey": "6LfhsZwrAAAAAP6QjDxQE_3vdNUrup2ksd2Owj5-",
+      "secretKey": "6LfhsZwrAAAAALfCbDNdS1vtSUCvh7GxVJ2QYD5N"
     }
   },
   "dashBoard": {
     "enable": true,
     "expireVerifyCode": 300000,
-    "port": 3001
+    "port": 3030
   },
   "serverUptime": {
     "enable": true,
@@ -149,8 +160,8 @@
     "updatePresence": true,
     "listenTyping": true,
     "logLevel": "error",
-    "selfListen": true,
-    "selfListenEvent": true,
+    "selfListen": false,
+    "selfListenEvent": false,
     "autoMarkDelivery": false,
     "autoReconnect": true,
     "online": false,

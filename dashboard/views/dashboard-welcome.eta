@@ -39,10 +39,10 @@ const shortcuts = [{
 <div class="container">
   <br>
   <div class="d-flex align-items-center mb-1">
-    <span class="fw-bold mb-0 me-3" style="font-size: 1.2rem;">Thread Name: <%=threadData.threadName || "null"%></span>
+    <span class="fw-bold mb-0 me-3" style="font-size: 1.2rem;">Group Name: <%=threadData.threadName || "null"%></span>
   </div>
   <div class="d-flex align-items-center mb-3">
-    <span class="fw-bold mb-0 me-3" style="font-size: 1.2rem;">Thread ID: <%=threadID%></span>
+    <span class="fw-bold mb-0 me-3" style="font-size: 1.2rem;">Group ID: <%=threadID%></span>
   </div>
 
   <h3 class="text-center">Custom Welcome Message 👋</h3>
@@ -50,8 +50,8 @@ const shortcuts = [{
   <div class="row justify-content-between mt-3">
     <div class="col-12 col-lg-6 mb-3">
       <div class="row list" id="list-shortcut">
-        <h4>Danh sách các shortcut có sẵn:</h4>
-        <span class="text-muted mb-2">(Click vào shortcut để copy)</span>
+        <h4>Available shortcuts:</h4>
+        <span class="text-muted mb-2">(Click shortcut to copy)</span>
 
         <% for (const item of shortcuts) { %>
         <div class="ms-2">
@@ -62,7 +62,7 @@ const shortcuts = [{
     </div>
 
     <div class="col-12 col-lg-6 mb-3">
-      <h4 class="mb-2">Tin nhắn chào mừng thành viên mới:</h4>
+      <h4 class="mb-2">Welcome message for new members:</h4>
       <textarea class="textarea-welcome-message form-control rounded" rows="7" id="message" spellcheck="false" style="resize: none;"><%=threadData.data.welcomeMessage || defaultWelcomeMessage%></textarea>
     </div>
     <script>
@@ -79,10 +79,10 @@ const shortcuts = [{
   </div>
 
   <hr>
-  <h4>Những tệp được gửi kèm tin nhắn chào mừng trong nhóm bạn:</h4>
+  <h4>Files attached to the welcome message in your group:</h4>
   <button class="mt-1 btn btn-sm btn-phoenix-danger disabled" id="delete-attachment-chosen">
     <i class="fas fa-trash"></i>
-    Xóa tệp đính kèm đã chọn
+    Delete selected attachments
   </button>
 
   <div data-list="" class="table-responsive scrollbar" id="table-welcome-attachment">

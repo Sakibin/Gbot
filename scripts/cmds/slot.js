@@ -107,13 +107,8 @@ module.exports = {
     await usersData.set(senderID, { money: user.money + winnings });
     const finalBalance = user.money + winnings;
 
-    // Fancy ASCII art for slots
-    const slotBox = 
-      "╔═════════════════════╗\n" +
-      "║  🎰 𝗦𝗟𝗢𝗧 𝗠𝗔𝗖𝗛𝗜𝗡𝗘 🎰  ║\n" +
-      "╠═════════════════════╣\n" +
-      `║     [ ${slot1} | ${slot2} | ${slot3} ]     ║\n` +
-      "╚═════════════════════╝";
+    // Simple slot machine design
+    const slotBox = `[ ${slot1} | ${slot2} | ${slot3} ]`;
 
     // Color-coded result message
     const resultColor = winnings >= 0 ? "🟢" : "🔴";
@@ -131,3 +126,4 @@ module.exports = {
     return message.reply(messageContent);
   }
 };
+

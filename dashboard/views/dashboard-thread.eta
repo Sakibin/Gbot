@@ -13,8 +13,8 @@
 <form id="setData" class="container">
   <br>
 	<div class="bg-300 rounded-5 py-4">
-		<h5 class="text-center">Box Name: <%= threadData.threadName %></h5>
-		<p class="mt-2 mb-0 text-center">Box ID: <%= threadData.threadID %></p>
+		<h5 class="text-center">Group Name: <%= threadData.threadName %></h5>
+		<p class="mt-2 mb-0 text-center">Group ID: <%= threadData.threadID %></p>
 	</div>
 
 	<hr>
@@ -33,7 +33,7 @@
 				</label>
 			</div>
 		</div>
-		<p class="text-700 lead fs-1 ms-2 mb-0">Gửi tin nhắn chào mừng thành viên mới!</p>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Send welcome message to new members!</p>
 	</div>
 
 	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/leave'">
@@ -50,7 +50,7 @@
 				</label>
 			</div>
 		</div>
-		<p class="text-700 lead fs-1 ms-2 mb-0">Gửi tin nhắn tạm biệt thành viên rời khỏi nhóm!</p>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Send farewell message to members leaving the group!</p>
 	</div>
 
 	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/rankup'">
@@ -67,7 +67,7 @@
 				</label>
 			</div>
 		</div>
-		<p class="text-700 lead fs-1 ms-2 mb-0">Gửi tin nhắn thông báo thăng cấp!</p>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Send rank-up notification message!</p>
 	</div>
 
 	<div class="bg-300 rounded-5 py-4 px-4 mt-2" role="button" onclick="window.location.href='/dashboard/<%= threadID %>/custom-cmd'">
@@ -84,11 +84,11 @@
 				</label>
 			</div>
 		</div>
-		<p class="text-700 lead fs-1 ms-2 mb-0">Tùy chỉnh lệnh của bot!</p>
+		<p class="text-700 lead fs-1 ms-2 mb-0">Customize bot commands!</p>
 	</div>
 
 	<input type="hidden" name="threadID" value="<%= threadID %>">
-	<button type="submit" id="save" class="mt-2 btn btn-primary btn-block" <%=authConfigDashboard ? '' : 'disabled'%>>Lưu</button>
+	<button type="submit" id="save" class="mt-2 btn btn-primary btn-block" <%=authConfigDashboard ? '' : 'disabled'%>>Save</button>
 
 </form>
 
@@ -114,22 +114,22 @@
           $.createToast({
             title: "Success",
             type: "success",
-            message: "Cập nhật thành công!"
+            message: "Update successful!"
           })
         },
         error: function(err) {
           $.createToast({
-            title: "Lỗi",
+            title: "Error",
             type: "error",
-            message: "Đã xảy ra lỗi!"
+            message: "An error occurred!"
           })
         }
       });
       '<% } else { %>'
       e.preventDefault();
       $.createToast({
-        title: "Warnig",
-        message: "[!] Chỉ quản trị viên của nhóm chat hoặc những thành viên được cho phép mới có thể chỉnh sửa dashboard",
+        title: "Warning",
+        message: "[!] Only group admins or authorized members can edit the dashboard",
         type: "warning",
       })
       '<% } %>'

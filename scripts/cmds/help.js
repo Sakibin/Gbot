@@ -1,67 +1,63 @@
-const fs = require("fs");
-const path = require("path");
 const { getPrefix } = global.utils;
 const { commands, aliases } = global.GoatBot;
 
 module.exports = {
   config: {
     name: "help",
-    version: "3.2",
-    author: "NTKhang // xnil6x",
+    version: "3.3",
+    author: "NTKhang // Modified by Sakibin",
     countDown: 5,
     role: 0,
-    description: "View command information with enhanced interface",
+    description: "Show available commands or specific command usage",
     category: "info",
     guide: {
       en: "{pn} [command] - View command details\n{pn} all - View all commands\n{pn} c [category] - View commands in category"
+    },
+    envConfig: {
+      autoUnsend: true,
+      delayUnsend: 60
     }
   },
 
   langs: {
     en: {
-      helpHeader: "╔═══════◇◆◇═══════╗\n"
-                + "      BOT COMMAND LIST\n"
-                + "╠═══════◇◆◇═══════╣",
-      categoryHeader: "\n   ┌────── {category} ──────┐\n",
-      commandItem: "║ │ 🟢 {name}",
-      helpFooter: "║ └─────────────────┘\n"
-                + "╚═══════◇◆◇═══════╝",
-      commandInfo: "╔═══════◇◆◇═══════╗\n"
-                 + "║           COMMAND INFORMATION      \n"
-                 + "╠═══════◇◆◇═══════╣\n"
-                 + "║ 🏷️ Name: {name}\n"
-                 + "║ 📝 Description: {description}\n"
-                 + "║ 📂 Category: {category}\n"
-                 + "║ 🔤 Aliases: {aliases}\n"
-                 + "║ 🏷️ Version: {version}\n"
-                 + "║ 🔒 Permissions: {role}\n"
-                 + "║ ⏱️ Cooldown: {countDown}s\n"
-                 + "║ 🔧 Use Prefix: {usePrefix}\n"
-                 + "║ 👤 Author: Sakibin\n"
-                 + "╠═══════◇◆◇═══════╣",
-      usageHeader: "║ 🛠️ USAGE GUIDE",
-      usageBody: " ║ {usage}",
-      usageFooter: "╚═══════◇◆◇═══════╝",
+      helpHeader: "╔═─── HELP ──═╗",
+      categoryHeader: "\n╟─ 📂 Category: {category}",
+      commandItem: "║ • {name}",
+      helpFooter: "╚═───────═╝",
+      commandInfo:
+        "╔═─ COMMAND INFO ─═╗\n" +
+        "║ 🏷️ Name: {name}\n" +
+        "║ 📝 Description: {description}\n" +
+        "║ 📂 Category: {category}\n" +
+        "║ 🔤 Aliases: {aliases}\n" +
+        "║ 🧩 Version: {version}\n" +
+        "║ 🔒 Role: {role}\n" +
+        "║ ⏱️ Cooldown: {countDown}s\n" +
+        "║ 🧭 Use Prefix: {usePrefix}\n" +
+        "║ 👤 Author: Sakibin\n" +
+        "╠═──── GUIDE ───═╣",
+      usageBody: "║ {usage}",
+      usageFooter: "╚═────────═╝",
       commandNotFound: "⚠️ Command '{command}' not found!",
       doNotHave: "None",
       roleText0: "👥 All Users",
       roleText1: "👑 Group Admins",
       roleText2: "⚡ Bot Admins",
-      totalCommands: "📊 Total Commands: {total}\n"
-                  + "Sakibin"
+      totalCommands: "\n📊 Total Commands: {total} — by Sakibin"
     }
   },
 
-  onStart: async function({ message, args, event, threadsData, role }) {
-    const { threadID } = event;
-    const prefix = getPrefix(threadID);
+  onStart: async function({ message, args, event, role, api }) {
+    const prefix = getPrefix(event.threadID);
     const commandName = args[0]?.toLowerCase();
-    const bannerPath = path.join(__dirname, "assets", "20250319_111041.png");
+    const lang = this.langs.en;
+   //const config = require("../../sakibin.json"); // owner info
 
+    // Category help
     if (commandName === 'c' && args[1]) {
       const categoryArg = args[1].toUpperCase();
       const commandsInCategory = [];
-
       for (const [name, cmd] of commands) {
         if (cmd.config.role > 1 && role < cmd.config.role) continue;
         const category = cmd.config.category?.toUpperCase() || "GENERAL";
@@ -69,107 +65,97 @@ module.exports = {
           commandsInCategory.push({ name });
         }
       }
-
       if (commandsInCategory.length === 0) {
         return message.reply(`❌ No commands found in category: ${categoryArg}`);
       }
-
-      let replyMsg = this.langs.en.helpHeader;
-      replyMsg += this.langs.en.categoryHeader.replace(/{category}/g, categoryArg);
-
-      commandsInCategory.sort((a, b) => a.name.localeCompare(b.name)).forEach(cmd => {
-        replyMsg += this.langs.en.commandItem.replace(/{name}/g, cmd.name) + "\n";
-      });
-
-      replyMsg += this.langs.en.helpFooter;
-      replyMsg += "\n" + this.langs.en.totalCommands.replace(/{total}/g, commandsInCategory.length);
-
-      return message.reply(replyMsg);
+      let replyMsg = lang.helpHeader;
+      replyMsg += lang.categoryHeader.replace(/{category}/g, categoryArg);
+      commandsInCategory
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .forEach(cmd => {
+          replyMsg += `\n${lang.commandItem.replace(/{name}/g, cmd.name)}`;
+        });
+      replyMsg += `\n${lang.helpFooter}`;
+      replyMsg += lang.totalCommands.replace(/{total}/g, commandsInCategory.length);
+      const msgg = `‣ Bot Owner Sakibin\n${replyMsg}`;
+      const sentMessage = await api.shareContact(msgg, "100065445284007", event.threadID);
+      if (this.config.envConfig.autoUnsend) {
+        setTimeout(() => {
+          api.unsendMessage(sentMessage.messageID);
+        }, this.config.envConfig.delayUnsend * 1000);
+      }
+      return;
     }
 
+    // All commands help
     if (!commandName || commandName === 'all') {
       const categories = new Map();
-
       for (const [name, cmd] of commands) {
         if (cmd.config.role > 1 && role < cmd.config.role) continue;
-
         const category = cmd.config.category?.toUpperCase() || "GENERAL";
         if (!categories.has(category)) {
           categories.set(category, []);
         }
         categories.get(category).push({ name });
       }
-
       const sortedCategories = [...categories.keys()].sort();
-      let replyMsg = this.langs.en.helpHeader.replace(/{prefix}/g, prefix);
+      let replyMsg = lang.helpHeader;
       let totalCommands = 0;
-
       for (const category of sortedCategories) {
         const commandsInCategory = categories.get(category).sort((a, b) => a.name.localeCompare(b.name));
         totalCommands += commandsInCategory.length;
-
-        replyMsg += this.langs.en.categoryHeader.replace(/{category}/g, category);
-
+        replyMsg += lang.categoryHeader.replace(/{category}/g, category);
         commandsInCategory.forEach(cmd => {
-          replyMsg += this.langs.en.commandItem.replace(/{name}/g, cmd.name) + "\n";
+          replyMsg += `\n${lang.commandItem.replace(/{name}/g, cmd.name)}`;
         });
-
-        replyMsg += this.langs.en.helpFooter;
       }
-
-      replyMsg += "\n" + this.langs.en.totalCommands.replace(/{total}/g, totalCommands);
-
-      try {
-        if (fs.existsSync(bannerPath)) {
-          return message.reply({
-            body: replyMsg,
-            attachment: fs.createReadStream(bannerPath)
-          });
-        } else {
-          return message.reply(replyMsg);
-        }
-      } catch (e) {
-        console.error("Couldn't load help banner:", e);
-        return message.reply(replyMsg);
+      replyMsg += `\n${lang.helpFooter}`;
+      replyMsg += lang.totalCommands.replace(/{total}/g, totalCommands);
+      const msgg = `‣ Bot Owner: Sakibin\n${replyMsg}`;
+      const sentMessage = await api.shareContact(msgg, "100065445284007", event.threadID);
+      if (this.config.envConfig.autoUnsend) {
+        setTimeout(() => {
+          api.unsendMessage(sentMessage.messageID);
+        }, this.config.envConfig.delayUnsend * 1000);
       }
+      return;
     }
 
+    // Command info help
     let cmd = commands.get(commandName) || commands.get(aliases.get(commandName));
     if (!cmd) {
-      return message.reply(this.langs.en.commandNotFound.replace(/{command}/g, commandName));
+      return message.reply(lang.commandNotFound.replace(/{command}/g, commandName));
     }
-
-    const config = cmd.config;
-    const description = config.description?.en || config.description || "No description";
-    const aliasesList = config.aliases?.join(", ") || this.langs.en.doNotHave;
-    const category = config.category?.toUpperCase() || "GENERAL";
-
+    const configCmd = cmd.config;
+    const description = configCmd.description?.en || configCmd.description || "No description";
+    const aliasesList = configCmd.aliases?.join(", ") || lang.doNotHave;
+    const category = configCmd.category?.toUpperCase() || "GENERAL";
     let roleText;
-    switch(config.role) {
-      case 1: roleText = this.langs.en.roleText1; break;
-      case 2: roleText = this.langs.en.roleText2; break;
-      default: roleText = this.langs.en.roleText0;
+    switch(configCmd.role) {
+      case 1: roleText = lang.roleText1; break;
+      case 2: roleText = lang.roleText2; break;
+      default: roleText = lang.roleText0;
     }
-
-    let guide = config.guide?.en || config.usage || config.guide || "No usage guide available";
+    let guide = configCmd.guide?.en || configCmd.usage || configCmd.guide || "No usage guide available";
     if (typeof guide === "object") guide = guide.body;
-    guide = guide.replace(/\{prefix\}/g, prefix).replace(/\{name\}/g, config.name).replace(/\{pn\}/g, prefix + config.name);
-
-    let replyMsg = this.langs.en.commandInfo
-      .replace(/{name}/g, config.name)
+    guide = guide.replace(/\{prefix\}/g, prefix).replace(/\{name\}/g, configCmd.name).replace(/\{pn\}/g, prefix + configCmd.name);
+    let replyMsg = lang.commandInfo
+      .replace(/{name}/g, configCmd.name)
       .replace(/{description}/g, description)
       .replace(/{category}/g, category)
       .replace(/{aliases}/g, aliasesList)
-      .replace(/{version}/g, config.version)
+      .replace(/{version}/g, configCmd.version)
       .replace(/{role}/g, roleText)
-      .replace(/{countDown}/g, config.countDown || 1)
-      .replace(/{usePrefix}/g, typeof config.usePrefix === "boolean" ? (config.usePrefix ? "✅ Yes" : "❌ No") : "❓ Unknown")
-      .replace(/{author}/g, config.author || "Unknown");
-
-    replyMsg += "\n" + this.langs.en.usageHeader + "\n" +
-                this.langs.en.usageBody.replace(/{usage}/g, guide.split("\n").join("\n ")) + "\n" +
-                this.langs.en.usageFooter;
-
-    return message.reply(replyMsg);
+      .replace(/{countDown}/g, configCmd.countDown || 1)
+      .replace(/{usePrefix}/g, typeof configCmd.usePrefix === "boolean" ? (configCmd.usePrefix ? "✅ Yes" : "❌ No") : "❓ Unknown")
+      .replace(/{author}/g, configCmd.author || "Unknown");
+    replyMsg += `\n${lang.usageBody.replace(/{usage}/g, guide)}\n${lang.usageFooter}`;
+    const msgg = `‣ Bot Owner:  Sskibin\n${replyMsg}`;
+    const sentMessage = await api.shareContact(msgg, "100065445284007", event.threadID);
+    if (this.config.envConfig.autoUnsend) {
+      setTimeout(() => {
+        api.unsendMessage(sentMessage.messageID);
+      }, this.config.envConfig.delayUnsend * 1000);
+    }
   }
 };

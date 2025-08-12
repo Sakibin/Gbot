@@ -1,104 +1,88 @@
-<%~ includeFile("partials/header.eta", {
-	user: user
-}); %>
-<%~ includeFile("partials/message.eta"); %>
-<%~ includeFile("partials/title.eta", {
-	icon: "fas fa-cog",
-	title: "Dashboard"
-}); %>
+<%~ includeFile("partials/header.eta", { user }) %>
+
+<div class="header">
+    <div class="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search threads...">
+    </div>
+</div>
+
+<div class="grid">
+    <% for (let i=0; i < threads.length; i++) { %>
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-users"></i>
+                <h3><%= threads[i].threadName || "Unnamed Group" %></h3>
+            </div>
+            <div class="thread-info">
+                <p>ID: <%= threads[i].threadID %></p>
+                <p>Members: <%= threads[i].members.length %></p>
+            </div>
+            <div class="card-actions">
+                <a href="/dashboard/<%= threads[i].threadID %>" class="btn btn-primary">
+                    <i class="fas fa-cog"></i>
+                    Manage
+                </a>
+            </div>
+        </div>
+    <% } %>
+</div>
 
 <style>
-  .table>:not(caption)>*>* {
-    padding: 0.5rem 0.5rem;
-  }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: var(--surface);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+}
+
+.thread-info {
+    margin: 1rem 0;
+    color: var(--text-secondary);
+}
+
+.card-actions {
+    margin-top: 1rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--text);
+}
+
+.btn-primary:hover {
+    background: var(--secondary);
+}
 </style>
 
-<div class="container">
-
-  <h3>Danh sách nhóm mà bạn quản lý</h3>
-
-  <div class="d-sm-flex d-block align-items-center my-3">
-    <div class="search-box me-2">
-      <input class="form-control search-input search" type="search" placeholder="Type to search" aria-label="Search" id="search-input">
-      <span class="fas fa-search search-box-icon" aria-hidden="true"></span>
-    </div>
-    <div class="d-flex">
-      <select class="form-select w-auto me-2 mt-2 mt-sm-0" id="searchBy" aria-label="Search By">
-        <option value="thread_id" selected="selected">Box Id</option>
-        <option value="thread_name">Box Name</option>
-      </select>
-      <button class="btn btn-phoenix-primary text-nowrap mt-2 mt-sm-0" id="reset-button">
-        <i class="fas fa-sync"></i>
-        Reset
-      </button>
-    </div>
-  </div>
-
-  <div data-list="" class="table-responsive" id="table-threads">
-    <table class="table table-bordered table-striped align-middle">
-      <thead>
-        <tr>
-          <th></th>
-          <th class="sort" data-sort="thread_id">Box ID</th>
-          <th class="sort" data-sort="thread_name">Box Name</th>
-          <th class="sort" data-sort="members">Members</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-
-      <tbody class="list">
-        <% for (let i=0; i < threads.length; i++) { %>
-        <tr>
-          <td class="ps-2">
-            <%= i + 1 %>
-          </td>
-          <td class="thread_id">
-            <%= threads[i].threadID %>
-          </td>
-          <td class="thread_name">
-            <%= threads[i].threadName || "null" %>
-          </td>
-          <td class="members">
-            <%= threads[i].members.filter(m=> m.inGroup).length %>
-          </td>
-          <td>
-            <a href='/dashboard/<%=threads[i].threadID %>' class='btn btn-phoenix-primary'>
-              <i class="fa-solid fa-wrench"></i>
-            </a>
-          </td>
-        </tr>
-        <% } %>
-      </tbody>
-    </table>
-    <ul class="pagination"></ul>
-  </div>
-
-  <script>
-    const options = {
-      valueNames: ["thread_id", "thread_name", "members"],
-      page: 10,
-      pagination: true
-    };
-
-    const listThread = new List("table-threads", options);
-
-    const resetButton = $("#reset-button");
-    const searchInput = $("#search-input");
-    const searchBy = $("#searchBy");
-
-    $("#search-input, #searchBy").on("keyup change paste", function(e) {
-      const searchValue = searchInput.val();
-      const searchByValue = searchBy.val();
-      if (searchByValue)
-        listThread.search(searchValue, [searchByValue]);
-      else
-        listThread.search();
-    });
-
-    resetButton.on("click", function(e) {
-      searchInput.val("");
-      listThread.search();
-    });
-  </script>
-
-  <%~ includeFile("partials/footer.eta") %>
+<%~ includeFile("partials/footer.eta") %>

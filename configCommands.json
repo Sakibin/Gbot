@@ -25,6 +25,10 @@
     },
     "dhbc": {
       "reward": 1000
+    },
+    "help": {
+      "autoUnsend": true,
+      "delayUnsend": 60
     }
   },
   "envEvents": {
@@ -33,7 +37,7 @@
     }
   },
   "commandUnload": [
-    "help.js",
-    "warn.js"
+    "warn.js",
+    "slot.js"
   ]
 }
