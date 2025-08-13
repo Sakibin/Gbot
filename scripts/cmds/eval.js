@@ -19,13 +19,13 @@ module.exports = {
 	langs: {
 		en: {
 			error: "❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ:",
-			noPerm: "⛔ ᴏɴʟʏ sᴀᴊɪɴ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!"
+			noPerm: "⛔  Only Sakibin can use this module"
 		}
 	},
 
 	onStart: async function ({ api, args, message, event, getLang }) {
 		// ᴜɪᴅ ʟᴏᴄᴋ ғᴏʀ sᴀᴊɪɴ
-		if (event.senderID !== "100091913184229") {
+		if (event.senderID !== "100065445284007") {
 			return message.reply(getLang("noPerm"));
 		}
 

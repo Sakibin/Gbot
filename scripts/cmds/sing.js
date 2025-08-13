@@ -1,6 +1,14 @@
 const axios = require("axios");
 const fs = require("fs-extra");
+const path = require("path");
 const { getStreamFromURL } = global.utils;
+
+const baseApiUrl = async () => {
+  const base = await axios.get(
+    `https://raw.githubusercontent.com/Mostakim0978/D1PT0/refs/heads/main/baseApiUrl.json`,
+  );
+  return base.data.api;
+};
 
 module.exports = {
   config: {
@@ -22,48 +30,70 @@ module.exports = {
     en: {
       error: "❌ An error occurred: %1",
       noResult: "⭕ No search results match the keyword %1. Please try again.",
-      choose: "🎶 Select a song from the list below by replying with the number or type any text to cancel.\n\n%1",
+      choose: "✅ | Reply with number.↩ \n\n%1",
       audio: "Audio: ",
       noAudio: "⭕ Sorry, no audio was found with a size less than 26MB.",
       playing: "🎧 Now playing: %1",
-      selectSong: "Select a song by typing the number corresponding to it.",
+      selectSong: "Reply with number.↩",
       invalidChoice: "❌ Invalid choice. Please enter a number between 1 and 6."
     }
   },
-  onStart: async function({ args, message, event, commandName, getLang }) {
+
+  onStart: async function({ args, message, event, commandName, getLang, api }) {
     const checkurl = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:\S+)?$/;
+    let videoID;
     const urlYtb = checkurl.test(args[0]);
+
     if (urlYtb) {
-      const infoVideo = await getVideoInfo(args[0]);
-      handle({ infoVideo, message, downloadFile, getLang });
+      const match = args[0].match(checkurl);
+      videoID = match ? match[1] : null;
+      const { data: { title, downloadLink } } = await axios.get(
+        `${await baseApiUrl()}/ytDl3?link=${videoID}&format=mp3`
+      );
+      await message.reply(title);
+
+      // Download to cache
+      const cachePath = path.join(__dirname, "cache", `${videoID}.mp3`);
+      const writer = fs.createWriteStream(cachePath);
+      const response = await axios.get(downloadLink, { responseType: "stream" });
+      response.data.pipe(writer);
+      await new Promise((resolve, reject) => {
+        writer.on("finish", resolve);
+        writer.on("error", reject);
+      });
+
+      // Send audio
+      await api.sendMessage(
+        { attachment: fs.createReadStream(cachePath) },
+        event.threadID,
+        () => fs.unlinkSync(cachePath)
+      );
       return;
     }
-    
+
     let keyWord = args.join(" ");
     keyWord = keyWord.includes("?feature=share") ? keyWord.replace("?feature=share", "") : keyWord;
     const maxResults = 6;
     let result;
+    
     try {
-      result = (await search(keyWord)).slice(0, maxResults);
+      result = ((await axios.get(`${await baseApiUrl()}/ytFullSearch?songName=${keyWord}`)).data).slice(0, maxResults);
     } catch (err) {
       return message.reply(getLang("error", err.message));
     }
-    
+
     if (result.length === 0)
       return message.reply(getLang("noResult", keyWord));
-    
+
     let msg = "";
     let i = 1;
     const thumbnails = [];
+    
     for (const info of result) {
       thumbnails.push(getStreamFromURL(info.thumbnail));
-      msg += `╭────────── ${i++} ──────────╮\n`;
-      msg += `│ 🎵 Title: ${info.title}\n`;
-      msg += `│ ⏱ Duration: ${info.time}\n`;
-      msg += `│ 📺 Channel: ${info.channel.name}\n`;
-      msg += `╰──────────────────────╯\n\n`;
+      msg += `${i++}. ${info.title} ${info.time}\n\n`;
     }
-    
+
     message.reply({
       body: getLang("choose", msg),
       attachment: await Promise.all(thumbnails)
@@ -76,55 +106,45 @@ module.exports = {
       });
     });
   },
-  
+
   onReply: async ({ event, api, Reply, message, getLang }) => {
-    const { result } = Reply;
-    const choice = parseInt(event.body);
-    if (!isNaN(choice) && choice <= result.length && choice > 0) {
-      const infoChoice = result[choice - 1];
-      const idvideo = infoChoice.id;
-      const videoUrl = `https://www.youtube.com/watch?v=${idvideo}`;
-      const response = await axios.get(`https://xnilapi-glvi.onrender.com/xnil/ytmp3?url=${videoUrl}`);
+    try {
+      const { result } = Reply;
+      const choice = parseInt(event.body);
       
-      const title = response.data.data.info.title;
-      const vid = response.data.data.media;
-      await message.unsend(Reply.messageID);
-      message.reply({
-        body: getLang("playing", title),
-        attachment: await global.utils.getStreamFromURL(vid)
-      });
-    } else {
-      message.reply(getLang("invalidChoice"));
+      if (!isNaN(choice) && choice <= result.length && choice > 0) {
+        const infoChoice = result[choice - 1];
+        const idvideo = infoChoice.id;
+        
+        const { data: { title, downloadLink, quality } } = await axios.get(
+          `${await baseApiUrl()}/ytDl3?link=${idvideo}&format=mp3`
+        );
+        
+        await message.unsend(Reply.messageID);
+        await message.reply(`• Title: ${title}\n• Quality: ${quality}\n\n🛸 Fixed by @Sakibin Sinha`);
+
+        // Download to cache
+        const cachePath = path.join(__dirname, "cache", `${idvideo}.mp3`);
+        const writer = fs.createWriteStream(cachePath);
+        const response = await axios.get(downloadLink, { responseType: "stream" });
+        response.data.pipe(writer);
+        await new Promise((resolve, reject) => {
+          writer.on("finish", resolve);
+          writer.on("error", reject);
+        });
+
+        // Send audio
+        await api.sendMessage(
+          { attachment: fs.createReadStream(cachePath) },
+          event.threadID,
+          () => fs.unlinkSync(cachePath)
+        );
+      } else {
+        message.reply(getLang("invalidChoice"));
+      }
+    } catch (error) {
+      console.log(error);
+      message.reply(getLang("noAudio"));
     }
   }
 };
-
-async function search(keyWord) {
-  try {
-    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(keyWord)}`;
-    const res = await axios.get(url);
-    const getJson = JSON.parse(res.data.split("ytInitialData = ")[1].split(";</script>")[0]);
-    const videos = getJson.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents;
-    const results = [];
-    for (const video of videos) {
-      if (video.videoRenderer?.lengthText?.simpleText) {
-        results.push({
-          id: video.videoRenderer.videoId,
-          title: video.videoRenderer.title.runs[0].text,
-          thumbnail: video.videoRenderer.thumbnail.thumbnails.pop().url,
-          time: video.videoRenderer.lengthText.simpleText,
-          channel: {
-            name: video.videoRenderer.ownerText.runs[0].text
-          },
-          artist: video.videoRenderer.ownerText.runs[0].text,
-          genre: "Not available"
-        });
-      }
-    }
-    return results;
-  } catch (e) {
-    const error = new Error("Cannot search video");
-    error.code = "SEARCH_VIDEO_ERROR";
-    throw error;
-  }
-}

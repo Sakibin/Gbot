@@ -38,6 +38,8 @@
   },
   "commandUnload": [
     "warn.js",
-    "slot.js"
+    "slot.js",
+    "spin.js",
+    "wheel.js"
   ]
 }
