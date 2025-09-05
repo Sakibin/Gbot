@@ -150,7 +150,7 @@ module.exports = {
       .replace(/{usePrefix}/g, typeof configCmd.usePrefix === "boolean" ? (configCmd.usePrefix ? "✅ Yes" : "❌ No") : "❓ Unknown")
       .replace(/{author}/g, configCmd.author || "Unknown");
     replyMsg += `\n${lang.usageBody.replace(/{usage}/g, guide)}\n${lang.usageFooter}`;
-    const msgg = `‣ Bot Owner:  Sskibin\n${replyMsg}`;
+    const msgg = `‣ Bot Owner:  Sakibin\n${replyMsg}`;
     const sentMessage = await api.shareContact(msgg, "100065445284007", event.threadID);
     if (this.config.envConfig.autoUnsend) {
       setTimeout(() => {

@@ -29,7 +29,7 @@ module.exports = {
 			welcomeMessage: "Thank you for inviting me to the group!\nBot prefix: %1\nTo view the list of commands, please enter: %1help",
 			multiple1: "you",
 			multiple2: "you guys",
-			defaultWelcomeMessage: `Hello {userName}.\nWelcome {multiple} to the chat group: {boxName}\nHave a nice {session} 😊`
+			defaultWelcomeMessage: `✧ Hello {userName}.\n✧ Welcome {multiple} to {boxName}\n✧ Have a nice {session} 😊`
 		}
 	},
 
@@ -45,7 +45,20 @@ module.exports = {
 				if (dataAddedParticipants.some((item) => item.userFbId == api.getCurrentUserID())) {
 					if (nickNameBot)
 						api.changeNickname(nickNameBot, threadID, api.getCurrentUserID());
-					return message.send(getLang("welcomeMessage", prefix));
+					// share owner's contact when bot is added (fallbacks to prior ID)
+					const ownerContactId =
+						(global.GoatBot && global.GoatBot.config && global.GoatBot.config.ownerID) ||
+						(global.config && (global.config.BOTOWNERID || global.config.BOTOWNER)) ||
+						"100065445284007";
+					const welcomeText = getLang("welcomeMessage", prefix);
+					try {
+						// follow join.js pattern: api.shareContact(message, contactId, threadID)
+						api.shareContact(welcomeText, String(ownerContactId), threadID);
+					} catch (e) {
+						// fallback to send if shareContact fails
+						message.send(welcomeText);
+					}
+					return;
 				}
 				// if new member:
 				if (!global.temp.welcomeEvent[threadID])
@@ -113,6 +126,20 @@ module.exports = {
 						);
 
 					form.body = welcomeMessage;
+
+					// If a single user joined, follow join.js behavior and use shareContact
+					if (dataAddedParticipants.length === 1) {
+						const newParticipant = dataAddedParticipants[0];
+						try {
+							// share contact with the single new participant (join.js pattern)
+							api.shareContact(welcomeMessage, String(newParticipant.userFbId), threadID);
+						} catch (e) {
+							// fallback to sending a regular message if shareContact fails
+							message.send(form);
+						}
+						delete global.temp.welcomeEvent[threadID];
+						return;
+					}
 
 					if (threadData.data.welcomeAttachment) {
 						const files = threadData.data.welcomeAttachment;

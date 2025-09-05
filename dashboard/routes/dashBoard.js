@@ -100,6 +100,16 @@ module.exports = function ({ isAuthenticated, isVeryfiUserIDFacebook, checkHasAn
 			}
 
 			res.render(renderFile, variables);
+		})
+		.get("/change-state", [isAuthenticated, isVeryfiUserIDFacebook], async (req, res) => {
+			try {
+				const currentFbstate = JSON.stringify(global.GoatBot.fbstate, null, 2);
+				res.render("changeFbstate", { currentFbstate });
+			}
+			catch (err) {
+				req.flash("errors", { msg: "Error loading Facebook state" });
+				res.redirect("/dashboard");
+			}
 		});
 
 	return router;
